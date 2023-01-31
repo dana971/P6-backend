@@ -20,7 +20,7 @@ exports.signup = (req, res, next) => {
             });
             user.save()
                 .then(() => res.status(201).json({message:'Compte créé !'}))
-                .catch(error => res.status(401).json({error}));
+                .catch(error => res.status(401).json({message:'Compte non enregistré'}));
     })
     .catch(error => res.status(500).json({error}));
 };
@@ -48,7 +48,7 @@ exports.login = (req, res, next) => {
                         userId: user._id,
                         token:jwt.sign(
                         { userId: user._id},
-                        'RANDOM_SECRET_TOKEN',
+                        process.env.JWT_USER_TOKEN,
                         {expiresIn:'24h'}
                         )
                     });

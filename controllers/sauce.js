@@ -57,26 +57,23 @@ exports.UpdateSauce = (req, res, next) => {
         });
 };
 
-    exports.deleteSauce = (req, res, next) => {
-        Sauce.deleteOne({_id: req.params.id})
-            .then((sauce) => {res.status(200).json(sauce);
-            })
-            .catch((error) => {res.status(404).json({error: error});
-            });
-    };
+exports.deleteSauce = (req, res, next) => {
+    Sauce.deleteOne({_id: req.params.id})
+        .then((sauce) => {res.status(200).json(sauce);
+        })
+        .catch((error) => {res.status(404).json({error: error});
+        });
+};
 
 exports.likeSauce = (req, res, next) => {
     if ( req.body.like === 1) {
-
         // increment like -> $inc
         Sauce.updateOne(
             {_id: req.params.id},
             { $inc : {likes : 1}, $push : { usersLiked : req.body.userId}})
             .then(() => res.status(200).json({message : 'Sauce likée !'}))
             .catch(error => res.status(401).json({ error }));
-
         // ajouter le userId dans le tableau de userLiked -> $push
-
 
     } else if(req.body.like === -1)
     {
@@ -86,10 +83,7 @@ exports.likeSauce = (req, res, next) => {
             { $inc : {dislikes : 1}, $push : { usersDisliked : req.body.userId}})
             .then(() => res.status(200).json({message : 'Sauce likée !'}))
             .catch(error => res.status(401).json({ error }));
-        console.log(req.body);
-
             // ajouter le userId dans le tableau de userLiked -> $push
-
 
     } else if (req.body.like === 0) // on annule le vote du User
     {
@@ -97,6 +91,7 @@ exports.likeSauce = (req, res, next) => {
             //si like ou dislike === 0 $pull UserdId
             .then((sauce) => {
                 if(sauce.usersLiked.includes(req.body.userId) ){
+                    // si le userid est dans le tableau userliked j'actualise son like
                     Sauce.updateOne(
                         {_id: req.params.id},
                         {$inc : {likes : -1}, $pull: {usersLiked : req.body.userId }})
@@ -111,7 +106,6 @@ exports.likeSauce = (req, res, next) => {
                 }
             })
             .catch(error => res.status(401).json({error}));
-        // si le userid est dans le tableau userliked
 
     }
 }
