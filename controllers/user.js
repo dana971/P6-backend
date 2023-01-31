@@ -45,9 +45,9 @@ exports.login = (req, res, next) => {
                         return res.status(402).json({message:'Unauthorized'});
                     }
                     res.status(200).json({
-                        UserId: user._id,
+                        userId: user._id,
                         token:jwt.sign(
-                        { UserId: user._id},
+                        { userId: user._id},
                         'RANDOM_SECRET_TOKEN',
                         {expiresIn:'24h'}
                         )
