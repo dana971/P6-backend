@@ -3,7 +3,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-
+const passwordSchema = require('../middleware/password-validator');
 
 /**
  * Création de nouveaux utilisateurs
@@ -12,17 +12,22 @@ const jwt = require('jsonwebtoken');
  * @param next
  */
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10) //fonction hash pour crypter le mdp
-        .then(hash => {
-            const user = new User({
-                email: req.body.email,
-                password: hash
-            });
-            user.save()
-                .then(() => res.status(201).json({message:'Compte créé !'}))
-                .catch(error => res.status(401).json({message:'Compte non enregistré'}));
-    })
-    .catch(error => res.status(500).json({error}));
+    if(!passwordSchema.validate(req.body.password)){
+        res.status(401).json({message:'Votre mot de passe doit comporter 2 majuscules,2 nombres et aucun espace'})
+    } else {
+        bcrypt.hash(req.body.password, 10) //fonction hash pour crypter le mdp
+            .then(hash => {
+                const user = new User({
+                    email: req.body.email,
+                    password: hash
+                });
+                user.save()
+                    .then(() => res.status(201).json({message:'Compte créé !'}))
+                    .catch(error => res.status(401).json({message:'Compte non enregistré'}));
+            })
+            .catch(error => res.status(500).json({error}));
+    }
+
 };
 
 
