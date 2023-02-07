@@ -12,6 +12,7 @@ const passwordSchema = require('../middleware/password-validator');
  * @param next
  */
 exports.signup = (req, res, next) => {
+    //Avant d'enregistrer le user on vérifie que le psw soit conforme au schema
     if(!passwordSchema.validate(req.body.password)){
         res.status(401).json({message:'Votre mot de passe doit comporter 2 majuscules,2 nombres et aucun espace'})
     } else {
@@ -23,9 +24,9 @@ exports.signup = (req, res, next) => {
                 });
                 user.save()
                     .then(() => res.status(201).json({message:'Compte créé !'}))
-                    .catch(error => res.status(401).json({message:'Compte non enregistré'}));
+                    .catch(() => res.status(401).json({message:'Compte non enregistré'}));
             })
-            .catch(error => res.status(500).json({error}));
+            .catch(error => res.status(400).json({error}));
     }
 
 };
@@ -42,12 +43,12 @@ exports.login = (req, res, next) => {
     User.findOne({email:req.body.email})
         .then(user => {
             if(!user) {
-                return res.status(401).json({message: 'Unauthorized'});
+                return res.status(401).json({message: 'Veuillez verifier vos identifiants'});
             }
             bcrypt.compare(req.body.password, user.password)
                 .then(valid =>{
                     if(!valid){
-                        return res.status(402).json({message:'Unauthorized'});
+                        return res.status(402).json({message:'Veuillez verifier vos identifiants'});
                     }
                     res.status(200).json({
                         userId: user._id,

@@ -2,7 +2,7 @@ const Sauce = require('../models/sauces');
 const fs = require("fs");
 
 /**
- *
+ * Fonction d'affichage des sauces
  * @param req
  * @param res
  * @param next
@@ -16,12 +16,13 @@ exports.displaySauces= (req, res, next) => {
 };
 
 /**
- *
+ *Fonction d'affichage d'une sauce grâce à son id
  * @param req
  * @param res
  * @param next
  */
 exports.displayOneSauce=(req, res, next) => {
+   // On vérifie que l'id de la sauce est le meme que celui du paramètre
     Sauce.findOne({_id: req.params.id})
         .then((sauce) => {res.status(200).json(sauce);})
         .catch((error) => {res.status(404).json({error: error});
@@ -29,28 +30,29 @@ exports.displayOneSauce=(req, res, next) => {
 };
 
 /**
- *
+ *Fonction de création d'une sauce
  * @param req
  * @param res
  * @param next
- * @constructor
+ * @constructor objet sauce
  */
 exports.CreateSauce=(req, res, next) => {
     const sauceObject =JSON.parse(req.body.sauce);
     delete sauceObject._id;
-    //delete sauceObject.userId;
+
+    //Création d'une instance du modèle Sauce
     const sauce = new Sauce({
         ...sauceObject,
-        //userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
+    //Enregistrement de la sauce dans la base de donnée
     sauce.save()
         .then(() => res.status(201).json({message: 'Sauce enregistrée'}))
         .catch(error => res.status(400).json({error}));
 };
 
 /**
- *
+ *Fonction de MAJ d'une sauce et de son image
  * @param req
  * @param res
  * @param next
@@ -62,22 +64,21 @@ exports.UpdateSauce = (req, res, next) => {
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : {...req.body};
 
-    console.log(req.body);
-
     delete sauceObject.userId;
-
+// On vérifie que l'id de la sauce est le meme que celui du paramètre
     Sauce.findOne({_id: req.params.id})
         .then((sauce) => {
+            //On vérifie que l'id du User === l'id du créateur de la sauce
             if (sauce.userId !== req.auth.userId) {
-                res.status(401).json({ message : 'Not authorized'});
+                res.status(401).json({ message : 'Modification non autorisée'});
             } else {
                 const filename = sauce.imageUrl.split('/images')[1];
+                //Suppression de l'image avec unlink
                 fs.unlink(`images/${filename}`, () =>{
                     Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
                         .then(() => res.status(200).json({message : 'Objet modifié!'}))
                         .catch(error => res.status(401).json({ error }));
                 });
-
             }
         })
         .catch((error) => {res.status(400).json({ error });
@@ -85,7 +86,7 @@ exports.UpdateSauce = (req, res, next) => {
 };
 
 /**
- *Fonction de suppression de sauce et d'image du back-end
+ *Fonction de suppression d'une sauce et de son image du back-end
  * @param req
  * @param res
  * @param next
@@ -93,6 +94,7 @@ exports.UpdateSauce = (req, res, next) => {
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({_id: req.params.id})
         .then(sauce => {
+            //On vérifie que l'id du User === l'id du créateur de la sauce
             if (sauce.userId !== req.auth.userId) {
                 res.status(401).json({message: 'Suppression non autorisé'});
             } else {
@@ -112,7 +114,7 @@ exports.deleteSauce = (req, res, next) => {
 
 
 /**
- *
+ *Fonction de like d'une sauce
  * @param req
  * @param res
  * @param next
@@ -139,7 +141,7 @@ exports.likeSauce = (req, res, next) => {
 
     } else if (req.body.like === 0) // on annule le vote du User
     {
-        Sauce.findOne({_id: req.params.id}) // trouve la sauce a partir de son id/
+        Sauce.findOne({_id: req.params.id}) // trouve la sauce à partir de son id/
             //si like ou dislike === 0 $pull UserdId
             .then((sauce) => {
                 if(sauce.usersLiked.includes(req.body.userId) ){

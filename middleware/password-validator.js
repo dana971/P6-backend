@@ -1,9 +1,11 @@
 const passwordValidator =require('password-validator');
 
+/**
+ * Paramétrage du format des mdp valide
+ */
 const passwordSchema = new passwordValidator();
-
 passwordSchema
-    .is().min(8,'Password should be at least 8 charachters long')
+    .is().min(8)
     .is().max(20)
     .has().uppercase(2)
     .has().digits(2)
