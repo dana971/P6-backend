@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 
 /**
+ * ToDo: next() vraiment nécessaire ?
  * Fonction d'authentification
  * @param req
  * @param res

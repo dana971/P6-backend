@@ -1,3 +1,5 @@
+// ToDo: Harmoniser les codes erreurs
+
 const Sauce = require('../models/sauces');
 const fs = require("fs");
 
@@ -8,12 +10,15 @@ const fs = require("fs");
  * @param next
  */
 exports.displaySauces= (req, res, next) => {
-   Sauce.find()
-       .then((sauces) => {res.status(201).json(sauces)})
-       .catch((error) => {res.status(400).json({error});
-});
-
-};
+    // ToDo: Aérer les callback des then() et catch()
+    Sauce.find()
+       .then((sauces) => {
+           res.status(201).json(sauces)
+       }, )
+       .catch((error) => {
+           res.status(400).json({error})
+       });
+}
 
 /**
  *Fonction d'affichage d'une sauce grâce à son id
@@ -59,11 +64,12 @@ exports.CreateSauce=(req, res, next) => {
  * @constructor
  */
 exports.UpdateSauce = (req, res, next) => {
+    // Todo: Commentaire
     const sauceObject = req.file ? {
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : {...req.body};
-
+    // ToDo: pourquoi ce delete ?
     delete sauceObject.userId;
 // On vérifie que l'id de la sauce est le meme que celui du paramètre
     Sauce.findOne({_id: req.params.id})
@@ -72,6 +78,7 @@ exports.UpdateSauce = (req, res, next) => {
             if (sauce.userId !== req.auth.userId) {
                 res.status(401).json({ message : 'Modification non autorisée'});
             } else {
+                // ToDo: Commentaire
                 const filename = sauce.imageUrl.split('/images')[1];
                 //Suppression de l'image avec unlink
                 fs.unlink(`images/${filename}`, () =>{
@@ -86,6 +93,7 @@ exports.UpdateSauce = (req, res, next) => {
 };
 
 /**
+ * ToDo: Revoir description
  *Fonction de suppression d'une sauce et de son image du back-end
  * @param req
  * @param res
@@ -98,19 +106,18 @@ exports.deleteSauce = (req, res, next) => {
             if (sauce.userId !== req.auth.userId) {
                 res.status(401).json({message: 'Suppression non autorisé'});
             } else {
+                // ToDo: Commentaire
                 const filename = sauce.imageUrl.split('/images')[1];
                 fs.unlink(`images/${filename}`, () => {
-                        Sauce.deleteOne({_id: req.params.id})
-                            .then(() => {res.status(200).json({message:'Objet supprimé'})})
-                            .catch(error => {res.status(401).json({error})});
+                    Sauce.deleteOne({_id: req.params.id})
+                        .then(() => {res.status(200).json({message:'Objet supprimé'})})
+                        .catch(error => {res.status(401).json({error})});
                     });
                 }
             })
         .catch(error => {res.status(500).json({error});
-
         });
-
-    };
+};
 
 
 /**

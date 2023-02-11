@@ -1,3 +1,4 @@
+// ToDo: export ou import ?
 // export de fonctions
 
 const bcrypt = require('bcrypt');
@@ -45,6 +46,7 @@ exports.login = (req, res, next) => {
             if(!user) {
                 return res.status(401).json({message: 'Veuillez verifier vos identifiants'});
             }
+            // ToDo: Commentaire
             bcrypt.compare(req.body.password, user.password)
                 .then(valid =>{
                     if(!valid){

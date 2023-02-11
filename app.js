@@ -19,9 +19,9 @@ const sauceRoutes = require ('./routers/sauces');
 const rateLimit = require('./middleware/rate-limiter');
 
 
-/**
- *
- */
+
+
+// ToDo: Commentaire - Décrire ces deux lignes
 app.use(express.json());
 //Paramétrage des headers http - Protection contre les attaques XSS
 app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin" }));

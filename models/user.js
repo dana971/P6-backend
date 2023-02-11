@@ -10,5 +10,6 @@ const userSchema = mongoose.Schema ({
     password: {type: String, required: true }
 });
 
+// ToDo: Commentaire
 userSchema.plugin(validator);
 module.exports = mongoose.model('user', userSchema);
