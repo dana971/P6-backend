@@ -2,7 +2,6 @@ const mongoose = require ('mongoose');
 
 /**
  * Modèles de l'objet Sauce
- * @type {*}
  */
 const sauceSchema = mongoose.Schema({
     userId:{type:String, Required:true},
@@ -15,7 +14,7 @@ const sauceSchema = mongoose.Schema({
     likes:{type:Number, default:0},
     dislikes:{type:Number, default:0},
     usersLiked:{type:[String]},
-    usersDisliked:{type:[   String]},
+    usersDisliked:{type:[String]},
 });
 
 module.exports = mongoose.model('sauce', sauceSchema);

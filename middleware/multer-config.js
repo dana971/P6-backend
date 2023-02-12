@@ -7,6 +7,7 @@ const MIME_TYPES = {
     'image/webp':'webp'
 };
 
+//Indique à Multer ou enregistrer les images
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, 'images');
@@ -18,4 +19,5 @@ const storage = multer.diskStorage({
     }
 });
 
+//Export du multer configurer
 module.exports = multer({storage: storage}).single('image');

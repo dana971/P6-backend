@@ -4,7 +4,7 @@ const rateLimit = require("express-rate-limit");
  * Paramétrage du Rate-limiter
  * Limitation du nombre de requête faite à l'api
  * //@param {Object} PassedOptions
- * //@returns {Object} Retrns RateLimitRequestHandler | LegacyStore
+ * //@returns {Object} Return RateLimitRequestHandler | LegacyStore
  */
 const rateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,

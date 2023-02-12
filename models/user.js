@@ -3,13 +3,13 @@ const validator = require('mongoose-unique-validator');
 
 /**
  * Modèle de l'objet User
- * @type {*}
  */
 const userSchema = mongoose.Schema ({
-    email : {type: String, required: true },
+    email : {type: String, required: true, unique: true},
     password: {type: String, required: true }
 });
 
-// ToDo: Commentaire
+// Plugin de validation du schema
+//Permet de valider l'unicité d'un mail
 userSchema.plugin(validator);
 module.exports = mongoose.model('user', userSchema);

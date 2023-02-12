@@ -1,7 +1,8 @@
+//Import package http pour la création d'un serveur
 const http = require('http');
 const app = require('./app');
 
-// ToDo: Commentaire -> normalizePort
+// La fonction normalizePort renvoie un port valide
 const normalizePort = val => {
     const port = parseInt(val, 10);
 
@@ -13,10 +14,12 @@ const normalizePort = val => {
     }
     return false;
 };
+
+//Port d'écoute du serveur
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-// ToDo: Commentaire -> errorHandler
+// Fonction qui renvoie les erreurs
 const errorHandler = error => {
     if (error.syscall !== 'listen') {
         throw error;
@@ -37,7 +40,7 @@ const errorHandler = error => {
     }
 };
 
-// ToDo: Commentaire - La variable server et ses utilisations
+// Creation du serveur avec CreateServer
 const server = http.createServer(app);
 
 server.on('error', errorHandler);

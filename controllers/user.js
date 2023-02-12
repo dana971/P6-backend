@@ -1,8 +1,9 @@
-// ToDo: export ou import ?
-// export de fonctions
+
+// Import de fonctions
 
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+//Ce package nous permet de créer des tokens
 const jwt = require('jsonwebtoken');
 const passwordSchema = require('../middleware/password-validator');
 
@@ -42,18 +43,21 @@ exports.signup = (req, res, next) => {
  */
 exports.login = (req, res, next) => {
     User.findOne({email:req.body.email})
+        //On vérifie si l'email saisie existe en base de donnée
         .then(user => {
             if(!user) {
                 return res.status(401).json({message: 'Veuillez verifier vos identifiants'});
             }
-            // ToDo: Commentaire
+            // On compare le mdp saisie au hash du user en base de donnée
             bcrypt.compare(req.body.password, user.password)
                 .then(valid =>{
                     if(!valid){
                         return res.status(402).json({message:'Veuillez verifier vos identifiants'});
                     }
+                    //Si le user est existant on génère un token
                     res.status(200).json({
                         userId: user._id,
+                        //On génère un Token
                         token:jwt.sign(
                         { userId: user._id},
                         process.env.JWT_USER_TOKEN,

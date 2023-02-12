@@ -1,5 +1,5 @@
-// ToDo: Harmoniser les codes erreurs
 
+//Import du model Sauce
 const Sauce = require('../models/sauces');
 const fs = require("fs");
 
@@ -24,9 +24,8 @@ exports.displaySauces= (req, res, next) => {
  *Fonction d'affichage d'une sauce grâce à son id
  * @param req
  * @param res
- * @param next
  */
-exports.displayOneSauce=(req, res, next) => {
+exports.displayOneSauce=(req, res,) => {
    // On vérifie que l'id de la sauce est le meme que celui du paramètre
     Sauce.findOne({_id: req.params.id})
         .then((sauce) => {res.status(200).json(sauce);})
@@ -38,10 +37,9 @@ exports.displayOneSauce=(req, res, next) => {
  *Fonction de création d'une sauce
  * @param req
  * @param res
- * @param next
  * @constructor objet sauce
  */
-exports.CreateSauce=(req, res, next) => {
+exports.CreateSauce=(req, res,) => {
     const sauceObject =JSON.parse(req.body.sauce);
     delete sauceObject._id;
 
@@ -64,13 +62,14 @@ exports.CreateSauce=(req, res, next) => {
  * @constructor
  */
 exports.UpdateSauce = (req, res, next) => {
-    // Todo: Commentaire
+    // On vérifie si l'objet Sauce existe et s'il a un champ file
     const sauceObject = req.file ? {
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : {...req.body};
-    // ToDo: pourquoi ce delete ?
+    // On supprime le userId de la requête
     delete sauceObject.userId;
+
 // On vérifie que l'id de la sauce est le meme que celui du paramètre
     Sauce.findOne({_id: req.params.id})
         .then((sauce) => {
@@ -78,9 +77,9 @@ exports.UpdateSauce = (req, res, next) => {
             if (sauce.userId !== req.auth.userId) {
                 res.status(401).json({ message : 'Modification non autorisée'});
             } else {
-                // ToDo: Commentaire
+                //Nous récupérons le nom de l'image dans le champ imageUrl
                 const filename = sauce.imageUrl.split('/images')[1];
-                //Suppression de l'image avec unlink
+                // Nous supprimons notre image grace a unlink
                 fs.unlink(`images/${filename}`, () =>{
                     Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
                         .then(() => res.status(200).json({message : 'Objet modifié!'}))
@@ -93,21 +92,20 @@ exports.UpdateSauce = (req, res, next) => {
 };
 
 /**
- * ToDo: Revoir description
- *Fonction de suppression d'une sauce et de son image du back-end
+ * Suppression d'une sauce de la base de donnée et de son image
  * @param req
  * @param res
- * @param next
  */
-exports.deleteSauce = (req, res, next) => {
+exports.deleteSauce = (req, res,) => {
     Sauce.findOne({_id: req.params.id})
         .then(sauce => {
             //On vérifie que l'id du User === l'id du créateur de la sauce
             if (sauce.userId !== req.auth.userId) {
                 res.status(401).json({message: 'Suppression non autorisé'});
             } else {
-                // ToDo: Commentaire
+                //Nous récupérons le nom de l'image dans le champ imageUrl
                 const filename = sauce.imageUrl.split('/images')[1];
+                // Nous supprimons notre image grace a unlink
                 fs.unlink(`images/${filename}`, () => {
                     Sauce.deleteOne({_id: req.params.id})
                         .then(() => {res.status(200).json({message:'Objet supprimé'})})
@@ -115,7 +113,7 @@ exports.deleteSauce = (req, res, next) => {
                     });
                 }
             })
-        .catch(error => {res.status(500).json({error});
+        .catch(error => {res.status(400).json({error});
         });
 };
 
@@ -124,9 +122,8 @@ exports.deleteSauce = (req, res, next) => {
  *Fonction de like d'une sauce
  * @param req
  * @param res
- * @param next
  */
-exports.likeSauce = (req, res, next) => {
+exports.likeSauce = (req, res,) => {
     if ( req.body.like === 1) {
         // increment like -> $inc
         Sauce.updateOne(
@@ -142,7 +139,7 @@ exports.likeSauce = (req, res, next) => {
         Sauce.updateOne(
             {_id: req.params.id},
             { $inc : {dislikes : 1}, $push : { usersDisliked : req.body.userId}})
-            .then(() => res.status(200).json({message : 'Sauce likée !'}))
+            .then(() => res.status(200).json({message : 'Sauce Dislikée !'}))
             .catch(error => res.status(401).json({ error }));
             // ajouter le userId dans le tableau de userLiked -> $push
 
@@ -162,7 +159,7 @@ exports.likeSauce = (req, res, next) => {
                     Sauce.updateOne(
                         {_id: req.params.id},
                         {$inc : {dislikes : -1}, $pull: {usersDisliked : req.body.userId}})
-                        .then(() => res.status(200).json({message: 'like comptabilisé'}))
+                        .then(() => res.status(200).json({message: 'Dislike comptabilisé'}))
                         .catch(error => res.status(401).json({error}));
                 }
             })

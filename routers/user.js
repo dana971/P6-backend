@@ -8,9 +8,7 @@ const router = express.Router();
 const userController = require('../controllers/user');
 
 
-/**
- * Routes d'authentification du User
- */
+//Routes d'authentification du User
 router.post('/signup',  userController.signup);
 router.post('/login', userController.login);
 
