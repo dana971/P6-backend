@@ -52,7 +52,7 @@ exports.login = (req, res, next) => {
             bcrypt.compare(req.body.password, user.password)
                 .then(valid =>{
                     if(!valid){
-                        return res.status(402).json({message:'Veuillez verifier vos identifiants'});
+                        return res.status(400).json({message:'Veuillez verifier vos identifiants'});
                     }
                     //Si le user est existant on génère un token
                     res.status(200).json({
