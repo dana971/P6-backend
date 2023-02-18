@@ -10,14 +10,9 @@ const fs = require("fs");
  * @param next
  */
 exports.displaySauces= (req, res, next) => {
-    // ToDo: Aérer les callback des then() et catch()
     Sauce.find()
-       .then((sauces) => {
-           res.status(201).json(sauces)
-       }, )
-       .catch((error) => {
-           res.status(400).json({error})
-       });
+       .then((sauces) => {res.status(201).json(sauces)}, )
+       .catch((error) => {res.status(400).json({error})});
 }
 
 /**

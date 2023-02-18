@@ -1,5 +1,5 @@
 const mongoose = require ('mongoose');
-
+const mongooseError = require('mongoose-mongodb-errors');
 /**
  * Modèles de l'objet Sauce
  */
@@ -16,5 +16,5 @@ const sauceSchema = mongoose.Schema({
     usersLiked:{type:[String]},
     usersDisliked:{type:[String]},
 });
-
+sauceSchema.plugin(mongooseError);
 module.exports = mongoose.model('sauce', sauceSchema);
